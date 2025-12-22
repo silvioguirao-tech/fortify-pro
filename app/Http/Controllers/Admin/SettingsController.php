@@ -55,19 +55,9 @@ class SettingsController extends Controller
 
         $count = \App\Models\User::count();
 
-        // Notify affected users that they must enable 2FA
+        // Notify affected users in background job when requireAll is enabled
         if ($requireAll) {
-            $affected = \App\Models\User::where(function ($q) {
-                $q->whereNull('two_factor_enabled')->orWhere('two_factor_enabled', false)->orWhereNull('two_factor_confirmed_at');
-            })->get();
-
-            foreach ($affected as $u) {
-                try {
-                    \Illuminate\Support\Facades\Mail::to($u)->queue(new \App\Mail\TwoFactorRequired($u));
-                } catch (\Throwable $e) {
-                    // Fail silently in case mail/send queue isn\'t configured in this environment
-                }
-            }
+            \App\Jobs\NotifyUsersTwoFactorRequired::dispatch();
         }
 
         AdminAction::create([

@@ -119,6 +119,14 @@ class AuthTest extends TestCase
         $user->refresh();
         $this->assertTrue((bool) $user->two_factor_enabled);
 
+        // when 2FA is required but not confirmed, user is redirected to /two-factor
+        $user->two_factor_enabled = false;
+        $user->two_factor_required = true;
+        $user->save();
+
+        $response = $this->actingAs($user)->get('/aluno');
+        $response->assertRedirect(route('two-factor'));
+
         // desabilitar 2FA
         $response = $this->actingAs($user)->post('/aluno/profile/2fa/disable');
         $response->assertRedirect(route('aluno.profile.edit'));
