@@ -30,10 +30,12 @@ class RolePermissionSeeder extends Seeder
 
         // Roles
         $admin = Role::firstOrCreate(['name' => 'admin']);
+        $aluno = Role::firstOrCreate(['name' => 'aluno']);
         $editor = Role::firstOrCreate(['name' => 'editor']);
 
         // Atribuir permissões
         $admin->givePermissionTo(Permission::all());
         $editor->givePermissionTo(['user.view', 'user.edit']);
+        // alunõs não recebem permissões administrativas por padrão
     }
 }
