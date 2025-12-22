@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow">
+<x-card class="max-w-md mx-auto">
     <h1 class="text-2xl font-bold mb-6 text-center">Entrar</h1>
 
     @if ($errors->any())
-        <div class="mb-4 text-red-600">
+        <x-alert type="error" class="mb-4">
             @foreach ($errors->all() as $error)
                 <div>{{ $error }}</div>
             @endforeach
-        </div>
+        </x-alert>
     @endif
 
     <form method="POST" action="{{ route('login') }}" class="space-y-4">
@@ -47,9 +47,7 @@
             </a>
         </div>
 
-        <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-            Entrar
-        </button>
+        <x-button class="w-full">Entrar</x-button>
     </form>
-</div>
+</x-card>
 @endsection
