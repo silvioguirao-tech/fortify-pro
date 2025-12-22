@@ -38,6 +38,9 @@ Route::middleware(['auth', 'role:admin'])
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)
     ->except(['show']);
 
+    Route::post('users/{user}/toggle-two-factor', [\App\Http\Controllers\Admin\UserController::class, 'toggleTwoFactor'])->name('users.toggle_two_factor');
+    Route::post('users/{user}/toggle-email-verification', [\App\Http\Controllers\Admin\UserController::class, 'toggleEmailVerification'])->name('users.toggle_email_verification');
+
 });
 
     Route::middleware(['auth', 'permission:user.view'])
