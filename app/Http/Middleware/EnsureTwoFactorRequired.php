@@ -25,8 +25,10 @@ class EnsureTwoFactorRequired
 
         $needs2fa = $requireAll || $userRequired;
 
-        // If needs 2fa but not enabled, and not already on two-factor routes, redirect
-        if ($needs2fa && !$user->two_factor_enabled) {
+        // If needs 2fa but not confirmed, and not already on two-factor routes, redirect
+        $hasConfirmed2fa = $user->two_factor_enabled && !empty($user->two_factor_confirmed_at);
+
+        if ($needs2fa && ! $hasConfirmed2fa) {
             // allow the two-factor page and logout routes
             if ($request->routeIs('two-factor') || $request->routeIs('aluno.profile.*') || $request->is('user/two-factor-authentication*')) {
                 return $next($request);

@@ -27,6 +27,8 @@ class SettingsTest extends TestCase
 
         Setting::set('require_2fa_for_all', '1');
 
+        \Illuminate\Support\Facades\Mail::fake();
+
         $response = $this->actingAs($admin)->post(route('admin.settings.apply_2fa'));
         $response->assertRedirect(route('admin.settings.index'));
 
@@ -35,5 +37,8 @@ class SettingsTest extends TestCase
         $this->assertDatabaseHas('admin_actions', ['action' => 'apply_require_2fa_to_all']);
 
         $this->assertEquals(3 + 1, \App\Models\User::where('two_factor_required', true)->count());
+
+        // ensure mails queued for affected users
+        \Illuminate\Support\Facades\Mail::assertQueued(\App\Mail\TwoFactorRequired::class, 3);
     }
 }
