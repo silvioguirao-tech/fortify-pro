@@ -67,6 +67,13 @@ Route::middleware(['auth', 'role:admin'])->get('/admin', function () {
     return view('admin.dashboard');
 });
 
-Route::middleware(['auth', 'role:aluno'])->get('/aluno', function () {
-    return view('aluno.dashboard');
+Route::middleware(['auth', 'role:aluno'])->prefix('aluno')->name('aluno.')->group(function () {
+    Route::get('/', function () {
+        return view('aluno.dashboard');
+    })->name('dashboard');
+
+    // Perfil do aluno
+    Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/2fa/enable', [\App\Http\Controllers\Student\ProfileController::class, 'enableTwoFactor'])->name('profile.2fa.enable');
+    Route::post('/profile/2fa/disable', [\App\Http\Controllers\Student\ProfileController::class, 'disableTwoFactor'])->name('profile.2fa.disable');
 });

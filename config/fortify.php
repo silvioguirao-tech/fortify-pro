@@ -143,17 +143,25 @@ return [
     |
     */
 
-    'features' => [
-        Features::registration(),
-        Features::resetPasswords(),
-        Features::emailVerification(),
-        Features::updateProfileInformation(),
-        Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0,
-        ]),
-    ],
+    'features' => (function () {
+        $features = [
+            Features::registration(),
+            Features::resetPasswords(),
+            Features::updateProfileInformation(),
+            Features::updatePasswords(),
+            Features::twoFactorAuthentication([
+                'confirm' => true,
+                'confirmPassword' => true,
+                // 'window' => 0,
+            ]),
+        ];
+
+        // Email verification is optional and disabled by default (use FEATURE_EMAIL_VERIFICATION=true to enable)
+        if (env('FEATURE_EMAIL_VERIFICATION', false)) {
+            $features[] = Features::emailVerification();
+        }
+
+        return $features;
+    })(),
 
 ];

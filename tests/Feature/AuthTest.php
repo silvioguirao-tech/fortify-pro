@@ -98,5 +98,33 @@ class AuthTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Esqueceu a senha');
     }
+
+    public function test_student_profile_and_2fa_toggle(): void
+    {
+        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+
+        $user = User::factory()->create();
+        $user->assignRole('aluno');
+
+        // acessa profile
+        $response = $this->actingAs($user)->get('/aluno/profile');
+        $response->assertStatus(200);
+        $response->assertSee('Meu Perfil');
+        $response->assertSee('2FA está <strong>DESATIVADA</strong>');
+
+        // habilitar 2FA
+        $response = $this->actingAs($user)->post('/aluno/profile/2fa/enable');
+        $response->assertRedirect(route('aluno.profile.edit'));
+
+        $user->refresh();
+        $this->assertTrue((bool) $user->two_factor_enabled);
+
+        // desabilitar 2FA
+        $response = $this->actingAs($user)->post('/aluno/profile/2fa/disable');
+        $response->assertRedirect(route('aluno.profile.edit'));
+
+        $user->refresh();
+        $this->assertFalse((bool) $user->two_factor_enabled);
+    }
 }
 
