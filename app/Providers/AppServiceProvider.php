@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register two factor route middleware alias
+        if ($this->app->bound('router')) {
+            $this->app['router']->aliasMiddleware('twofactor.required', \App\Http\Middleware\EnsureTwoFactorRequired::class);
+        }
     }
 }

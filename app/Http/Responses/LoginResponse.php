@@ -10,7 +10,7 @@ class LoginResponse implements LoginResponseContract
     {
         $user = $request->user();
 
-        if ($user->role === 'admin') {
+        if ($user && method_exists($user, 'hasRole') && $user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         }
 

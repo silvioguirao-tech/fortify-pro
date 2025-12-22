@@ -10,6 +10,17 @@
         </div>
     @endif
 
+    @php
+        $require2fa = \App\Models\Setting::get('require_2fa_for_all', '0');
+        $userRequired = auth()->user()->two_factor_required ?? false;
+    @endphp
+
+    @if($require2fa || $userRequired)
+        <div class="mb-4 border-l-4 p-4 bg-yellow-100 border-yellow-300 rounded">
+            <strong>Atenção:</strong> A administração requisitou que você ative a autenticação de dois fatores para continuar acessando certas áreas. Por favor, configure sua 2FA abaixo.
+        </div>
+    @endif
+
     {{-- Ativar 2FA --}}
     @if (! auth()->user()->two_factor_secret)
         <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
