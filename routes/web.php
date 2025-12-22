@@ -15,7 +15,8 @@ Route::middleware(['auth'])
     })->name('dashboard');
 });
 
-Route::middleware(['auth', 'isAdmin'])
+// Use Spatie role middleware 'role:admin' for admin routes
+Route::middleware(['auth', 'role:admin'])
 ->prefix('admin')
 ->name('admin.')
 ->group(function () {

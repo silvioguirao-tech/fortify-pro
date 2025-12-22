@@ -58,4 +58,21 @@ class AuthTest extends TestCase
 
         $response->assertRedirect(route('home'));
     }
+
+    public function test_admin_routes_are_protected(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('aluno');
+
+        // Aluno não deve acessar rota admin
+        $response = $this->actingAs($user)->get('/admin');
+        $response->assertStatus(403);
+
+        // Admin pode acessar
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $response = $this->actingAs($admin)->get('/admin');
+        $response->assertStatus(200);
+    }
 }
