@@ -60,4 +60,25 @@ class AdminUserTest extends TestCase
         $this->assertFalse((bool) $user->two_factor_enabled);
         $this->assertNull($user->two_factor_secret);
     }
+
+    public function test_forced_two_factor_redirects_user_to_two_factor_setup(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $user = User::factory()->create(['two_factor_enabled' => false, 'two_factor_required' => true]);
+        $user->assignRole('aluno');
+
+        $response = $this->actingAs($user)->get('/aluno');
+        $response->assertRedirect(route('two-factor'));
+
+        // admin forces global requirement
+        \App\Models\Setting::set('require_2fa_for_all', '1');
+
+        $user2 = User::factory()->create(['two_factor_enabled' => false]);
+        $user2->assignRole('aluno');
+
+        $response = $this->actingAs($user2)->get('/aluno');
+        $response->assertRedirect(route('two-factor'));
+    }
 }

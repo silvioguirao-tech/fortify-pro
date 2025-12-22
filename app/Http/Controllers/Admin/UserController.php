@@ -31,6 +31,14 @@ class UserController extends Controller
             $user->two_factor_confirmed_at = null;
             $user->two_factor_enabled = false;
             $user->save();
+
+            AdminAction::create([
+                'admin_id' => auth()->id(),
+                'action' => 'disable_two_factor',
+                'target_type' => 'user',
+                'target_id' => $user->id,
+                'meta' => null,
+            ]);
         } else {
             // enable minimal: generate secret and recovery codes (encrypted)
             $secret = bin2hex(random_bytes(10));
@@ -43,6 +51,14 @@ class UserController extends Controller
             $user->two_factor_confirmed_at = now();
             $user->two_factor_enabled = true;
             $user->save();
+
+            AdminAction::create([
+                'admin_id' => auth()->id(),
+                'action' => 'enable_two_factor',
+                'target_type' => 'user',
+                'target_id' => $user->id,
+                'meta' => null,
+            ]);
         }
 
         return redirect()->route('admin.users.index');
@@ -52,8 +68,22 @@ class UserController extends Controller
     {
         if ($user->email_verified_at) {
             $user->email_verified_at = null;
+            AdminAction::create([
+                'admin_id' => auth()->id(),
+                'action' => 'unverify_email',
+                'target_type' => 'user',
+                'target_id' => $user->id,
+                'meta' => null,
+            ]);
         } else {
             $user->email_verified_at = now();
+            AdminAction::create([
+                'admin_id' => auth()->id(),
+                'action' => 'verify_email',
+                'target_type' => 'user',
+                'target_id' => $user->id,
+                'meta' => null,
+            ]);
         }
 
         $user->save();
