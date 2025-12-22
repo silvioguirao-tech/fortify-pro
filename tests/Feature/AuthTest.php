@@ -75,4 +75,28 @@ class AuthTest extends TestCase
         $response = $this->actingAs($admin)->get('/admin');
         $response->assertStatus(200);
     }
+
+    public function test_login_view_renders(): void
+    {
+        $response = $this->get('/login');
+        $response->assertStatus(200);
+        $response->assertSee('Entrar');
+        $response->assertSee('Registrar');
+    }
+
+    public function test_register_view_renders(): void
+    {
+        $response = $this->get('/register');
+        $response->assertStatus(200);
+        $response->assertSee('Criar conta');
+        $response->assertSee('Entrar');
+    }
+
+    public function test_forgot_password_view_renders(): void
+    {
+        $response = $this->get('/forgot-password');
+        $response->assertStatus(200);
+        $response->assertSee('Esqueceu a senha');
+    }
 }
+
