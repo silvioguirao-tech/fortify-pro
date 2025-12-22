@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:admin'])
     // Admin settings
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/settings/apply-2fa', [\App\Http\Controllers\Admin\SettingsController::class, 'applyTwoFactorToAll'])->name('settings.apply_2fa');
 
 });
 

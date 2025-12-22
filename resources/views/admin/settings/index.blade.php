@@ -17,6 +17,13 @@
     </label>
 
     <button class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
+
+    @if($require2fa)
+        <form method="POST" action="{{ route('admin.settings.apply_2fa') }}" class="mt-4">
+            @csrf
+            <button class="bg-yellow-600 text-white px-4 py-2 rounded">Aplicar 'Exigir 2FA' para todos os usuários</button>
+        </form>
+    @endif
 </form>
 
 <hr class="my-6">

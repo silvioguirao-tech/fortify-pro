@@ -47,5 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
         'two_factor_enabled' => 'boolean',
         'two_factor_confirmed_at' => 'datetime',
+        'two_factor_required' => 'boolean',
     ];
 }

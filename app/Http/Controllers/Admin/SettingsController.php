@@ -21,7 +21,9 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
-        $this->authorize('update', auth()->user());
+        if (! $request->user() || ! $request->user()->hasRole('admin')) {
+            abort(403);
+        }
 
         $require2fa = $request->filled('require_2fa_for_all') ? '1' : '0';
         $emailVerification = $request->filled('email_verification_required') ? '1' : '0';
@@ -35,6 +37,30 @@ class SettingsController extends Controller
             'target_type' => 'settings',
             'target_id' => null,
             'meta' => ['require_2fa_for_all' => $require2fa, 'email_verification_required' => $emailVerification],
+        ]);
+
+        return redirect()->route('admin.settings.index');
+    }
+
+    public function applyTwoFactorToAll(Request $request)
+    {
+        if (! $request->user() || ! $request->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        $requireAll = (bool) Setting::get('require_2fa_for_all', '0');
+
+        // Apply flag to all users
+        \App\Models\User::query()->update(['two_factor_required' => $requireAll]);
+
+        $count = \App\Models\User::count();
+
+        AdminAction::create([
+            'admin_id' => $request->user()->id,
+            'action' => 'apply_require_2fa_to_all',
+            'target_type' => 'users',
+            'target_id' => null,
+            'meta' => ['require_2fa_for_all' => $requireAll, 'affected_users' => $count],
         ]);
 
         return redirect()->route('admin.settings.index');
